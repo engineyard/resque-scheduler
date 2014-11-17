@@ -130,7 +130,7 @@ module Resque
               args = optionizate_interval_value(config[interval_type])
               job = rufus_scheduler.send(interval_type, *args) do
                 if master?
-                  log! "queueing #{config['class']} (#{name})"
+                  log! "queueing #{config.inspect} (#{name})"
                   Resque.last_enqueued_at(name, Time.now.to_s)
                   handle_errors { enqueue_from_config(config) }
                 end
@@ -187,7 +187,7 @@ module Resque
             if master?
               item = Resque.next_item_for_timestamp(timestamp)
               if item
-                log "queuing #{item['class']} [delayed]"
+                log "queuing #{item.inspect} [delayed]"
                 handle_errors { enqueue_from_config(item) }
               end
             end
