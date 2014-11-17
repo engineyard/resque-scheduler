@@ -185,10 +185,20 @@ module Resque
           handle_shutdown do
             # Continually check that it is still the master
             if master?
-              item = Resque.next_item_for_timestamp(timestamp)
-              if item
-                log "queuing #{item.inspect} [delayed]"
-                handle_errors { enqueue_from_config(item) }
+              begin
+                item = Resque.next_item_for_timestamp(timestamp)
+                if item
+                  log "queuing #{item.inspect} [delayed]"
+                  something = enqueue_from_config(item)
+                  log "queued #{item.inspect} to #{something.inspect} [delayed]"
+                end
+              rescue => e
+                if item
+                  log_error "when handling #{item.inspect} \
+                  #{e.class.name}: #{e.message}"
+                else
+                  log_error "#{e.class.name}: #{e.message}"
+                end
               end
             end
           end
