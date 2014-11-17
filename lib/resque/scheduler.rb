@@ -364,10 +364,7 @@ module Resque
       end
 
       def procline(string)
-        log! string
-        argv0 = build_procline(string)
-        log "Setting procline #{argv0.inspect}"
-        $0 = argv0
+        $0 = build_procline(string)
       end
 
       private
